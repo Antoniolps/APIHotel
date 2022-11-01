@@ -5,17 +5,9 @@ namespace Hotel
 {
     public class Contacts
     {
-        public Guid Guid { get; set; }  
+        public Guid Id { get; set; }  
         public string CellPhone { get; set; }
         public string Email { get; set; }
-
-        
-        public Contacts(string cellPhone, string email)
-        {
-            Guid = Guid.NewGuid();
-            CellPhone = cellPhone;
-            Email = email;  
-        }
 
     }
 }
