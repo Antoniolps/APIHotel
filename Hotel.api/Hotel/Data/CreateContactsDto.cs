@@ -1,0 +1,13 @@
+﻿namespace Hotel.Data
+{
+    public class CreateContactsDto
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public string CellPhone { get; set; } = "00000-0000";
+
+        public string Email { get; set; } = "email@email.com";
+
+        public Guid CustomerId { get; set; } = Guid.NewGuid();
+    }
+}

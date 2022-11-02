@@ -32,7 +32,7 @@ namespace Hotel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("District")
@@ -71,7 +71,7 @@ namespace Hotel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
@@ -107,12 +107,7 @@ namespace Hotel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserLoginId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserLoginId");
 
                     b.ToTable("Customers");
                 });
@@ -121,6 +116,9 @@ namespace Hotel.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Password")
@@ -133,32 +131,43 @@ namespace Hotel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserLogin");
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Hotel.Address", b =>
                 {
-                    b.HasOne("Hotel.Customer", null)
+                    b.HasOne("Hotel.Customer", "Customer")
                         .WithMany("AddressesCustomer")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Hotel.Contacts", b =>
                 {
-                    b.HasOne("Hotel.Customer", null)
+                    b.HasOne("Hotel.Customer", "Customer")
                         .WithMany("ContactsCustomer")
-                        .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("Hotel.Customer", b =>
-                {
-                    b.HasOne("Hotel.UserLogin", "UserLogin")
-                        .WithMany()
-                        .HasForeignKey("UserLoginId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserLogin");
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Hotel.UserLogin", b =>
+                {
+                    b.HasOne("Hotel.Customer", "Customer")
+                        .WithOne("UserLogin")
+                        .HasForeignKey("Hotel.UserLogin", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Hotel.Customer", b =>
@@ -166,6 +175,9 @@ namespace Hotel.Migrations
                     b.Navigation("AddressesCustomer");
 
                     b.Navigation("ContactsCustomer");
+
+                    b.Navigation("UserLogin")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

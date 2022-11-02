@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hotel.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hotel.Data
 {
@@ -10,6 +11,9 @@ namespace Hotel.Data
         }
 
         public DbSet<Customer> Customers { get; set; }
-
+        public DbSet<Address> Address { get; set; }
+        public DbSet<Contacts> Contacts { get; set; }
+        public DbSet<UserLogin> Users { get; set; }
+        
     }
 }
