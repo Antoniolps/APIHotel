@@ -18,6 +18,10 @@ namespace Hotel.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Contacts>>> Get(Guid customerId)
         {
+            var customer = await _context.Customers.FindAsync(customerId);
+            if (customer == null)
+                return NotFound("Customer not found");
+
             var contacts = await _context.Contacts
                 .Where(a => a.CustomerId == customerId)
                 .ToListAsync();
@@ -30,7 +34,7 @@ namespace Hotel.Controllers
         {
             var customer = await _context.Customers.FindAsync(request.CustomerId);
             if (customer == null)
-                return NotFound();
+                return NotFound("Customer not found");
 
             var contact = new Contacts
             {
@@ -48,6 +52,9 @@ namespace Hotel.Controllers
         [HttpPut]
         public async Task<ActionResult<List<Contacts>>> UpdateAddress(CreateContactsDto request)
         {
+            var customer = await _context.Customers.FindAsync(request.CustomerId);
+            if (customer == null)
+                return NotFound("Customer not found");
 
             var contacts = await _context.Contacts
                 .Where(a => a.CustomerId == request.CustomerId)
