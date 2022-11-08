@@ -60,3 +60,5 @@ C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\runtimes\w
 C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\Caelum.Stella.CSharp.dll
+C:\Users\anton\source\repos\APIHotel\Hotel.api\Hotel\bin\Debug\net6.0\Newtonsoft.Json.dll

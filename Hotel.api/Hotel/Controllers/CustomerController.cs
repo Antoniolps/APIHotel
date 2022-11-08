@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using Caelum.Stella.CSharp.Validation;
+using Caelum.Stella.CSharp.Format;
+using System.Numerics;
 
 namespace Hotel.Controllers
 {
@@ -11,6 +14,8 @@ namespace Hotel.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
+        public CPFValidator CpfValidator = new CPFValidator();
+        public CPFFormatter CpfFormatter = new CPFFormatter();
 
         private readonly DataContext _context;
 
@@ -42,6 +47,17 @@ namespace Hotel.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Customer>>> AddCustomer(CreateCustomerDto request)
         {
+          
+            if (!CpfValidator.IsValid(request.CpfCustomer))
+                return BadRequest("Invalid Cpf!");
+
+            request.CpfCustomer = CpfFormatter.Format(request.CpfCustomer);
+
+            //Working for RG's without a verification digit
+            if (!Int32.TryParse(request.RgCustomer, out int n))
+                return BadRequest("Invalid Rg!");
+
+            
             var customer = new Customer
             {
                 FirstName = request.FirstName,
@@ -54,6 +70,8 @@ namespace Hotel.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(await _context.Customers.ToListAsync());
+            
+            
         }
 
         [HttpPut]
@@ -62,6 +80,14 @@ namespace Hotel.Controllers
             var dbCustomer = await _context.Customers.FindAsync(request.Id);
             if (dbCustomer == null)
                 return BadRequest("Customer not found");
+
+            if (!CpfValidator.IsValid(request.CpfCustomer))
+                return BadRequest("Invalid Cpf!");
+
+            request.CpfCustomer = CpfFormatter.Format(request.CpfCustomer);
+
+            if (!Int32.TryParse(request.RgCustomer, out int n))
+                return BadRequest("Invalid Rg!");
 
             dbCustomer.FirstName = request.FirstName;
             dbCustomer.LastName = request.LastName;
