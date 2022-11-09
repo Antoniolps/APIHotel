@@ -1,103 +1,87 @@
 ﻿using Hotel.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace Hotel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class UserLoginController : ControllerBase
     {
+
         private readonly DataContext _context;
+
         public UserLoginController(DataContext context)
         {
             _context = context;
         }
 
-        [HttpGet]
-        
-        public async Task<ActionResult<UserLogin>> Get(Guid CustomerId)
-        {
-            var user = await _context.Users
-                .Where(u => u.CustomerId == CustomerId)
-                .ToListAsync();
-            if (user == null)
-                return NotFound();
-
-            return Ok(user);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<UserLogin>> AddUser(CreateUserLoginDto request)
+        [HttpPost("register")]
+        public async Task<ActionResult<UserLogin>> Register(CreateUserLoginDto request)
         {
             var customer = await _context.Customers.FindAsync(request.CustomerId);
             if (customer == null)
                 return NotFound();
 
             var contacts = await _context.Contacts
-                .Where(a => a.CustomerId == request.CustomerId)
+                .Where(c => c.CustomerId == request.CustomerId)
                 .ToListAsync();
             if (contacts == null)
                 return BadRequest();
 
             request.UserName = contacts.First().Email;
 
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
             var newUser = new UserLogin
             {
                 UserName = request.UserName,
-                Password = request.Password,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
                 CustomerId = request.CustomerId
             };
 
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return Ok(newUser);
+            return Ok(newUser);            
         }
 
-        [HttpPut]
-        public async Task<ActionResult<UserLogin>> UpdatePassword(UpdatePasswordDto request)
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(LoginUserDto request)
         {
-            var customer = await _context.Customers.FindAsync(request.CustomerId);
-            if (customer == null)
-                return NotFound("Customer not found!");
+            var users = await _context.Users.Where(u => u.UserName == request.UserName).ToListAsync();
+            var user = users[0];
 
-            var user = await _context.Users
-                .Where(u => u.CustomerId == request.CustomerId)
-                .ToListAsync();
-            if (user == null)
-                return NotFound("User not Found");
+            if(user.UserName != request.UserName)
+                return BadRequest("User not Found!");
 
-            if (request.Password == user[0].Password)
+            if (!VerifyPasswordHash(request.Password, user))
+                return BadRequest("Wrong Password!");
+
+            return Ok("Success");
+        }
+
+        [NonAction]
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using(var hmac = new HMACSHA512())
             {
-                if (request.NewPassword == request.ConfirmPassWord)
-                {
-                    user[0].Password = request.NewPassword;
-                    await _context.SaveChangesAsync();
-                    return Ok(user);
-                }
-                else
-                {
-                    return BadRequest("Passwords must be the same");
-                }
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-            else
-                return BadRequest("Incorrect current password");
-            
         }
 
-        [HttpDelete]
-        public async Task<ActionResult<UserLogin>> Delete(Guid id)
+        [NonAction]
+        public bool VerifyPasswordHash(string password, UserLogin user)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-                return NotFound("User not found");
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("User was been removed");
+            using(var hmac = new HMACSHA512(user.PasswordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(user.PasswordHash);
+            }
         }
     }
 }

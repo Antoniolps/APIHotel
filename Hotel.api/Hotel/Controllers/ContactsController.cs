@@ -32,6 +32,10 @@ namespace Hotel.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Contacts>>> Create(CreateContactsDto request)
         {
+
+            if (request == null)
+                return BadRequest("Request cant be null");
+
             var customer = await _context.Customers.FindAsync(request.CustomerId);
             if (customer == null)
                 return NotFound("Customer not found");
@@ -50,7 +54,7 @@ namespace Hotel.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<Contacts>>> UpdateAddress(CreateContactsDto request)
+        public async Task<ActionResult<List<Contacts>>> UpdateAddress(UpdateContactsDto request)
         {
             var customer = await _context.Customers.FindAsync(request.CustomerId);
             if (customer == null)

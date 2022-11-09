@@ -22,7 +22,7 @@ namespace Hotel.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Hotel.Address", b =>
+            modelBuilder.Entity("Hotel.Model.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace Hotel.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("Hotel.Contacts", b =>
+            modelBuilder.Entity("Hotel.Model.Contacts", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,7 +85,7 @@ namespace Hotel.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("Hotel.Customer", b =>
+            modelBuilder.Entity("Hotel.Model.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,11 +95,7 @@ namespace Hotel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -112,7 +108,7 @@ namespace Hotel.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Hotel.UserLogin", b =>
+            modelBuilder.Entity("Hotel.Model.UserLogin", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,9 +117,13 @@ namespace Hotel.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -137,9 +137,9 @@ namespace Hotel.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Hotel.Address", b =>
+            modelBuilder.Entity("Hotel.Model.Address", b =>
                 {
-                    b.HasOne("Hotel.Customer", "Customer")
+                    b.HasOne("Hotel.Model.Customer", "Customer")
                         .WithMany("AddressesCustomer")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -148,9 +148,9 @@ namespace Hotel.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Hotel.Contacts", b =>
+            modelBuilder.Entity("Hotel.Model.Contacts", b =>
                 {
-                    b.HasOne("Hotel.Customer", "Customer")
+                    b.HasOne("Hotel.Model.Customer", "Customer")
                         .WithMany("ContactsCustomer")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -159,18 +159,18 @@ namespace Hotel.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Hotel.UserLogin", b =>
+            modelBuilder.Entity("Hotel.Model.UserLogin", b =>
                 {
-                    b.HasOne("Hotel.Customer", "Customer")
+                    b.HasOne("Hotel.Model.Customer", "Customer")
                         .WithOne("UserLogin")
-                        .HasForeignKey("Hotel.UserLogin", "CustomerId")
+                        .HasForeignKey("Hotel.Model.UserLogin", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Hotel.Customer", b =>
+            modelBuilder.Entity("Hotel.Model.Customer", b =>
                 {
                     b.Navigation("AddressesCustomer");
 

@@ -1,10 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Hotel.Data
+﻿namespace Hotel.Data
 {
-    public class CreateContactsDto
+    public class UpdateContactsDto
     {
-        [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
         public string CellPhone { get; set; } = "00000-0000";
         public string Email { get; set; } = "email@email.com";

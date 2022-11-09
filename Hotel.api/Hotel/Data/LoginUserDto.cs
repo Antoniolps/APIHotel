@@ -2,12 +2,13 @@
 
 namespace Hotel.Data
 {
-    public class CreateContactsDto
+    public class LoginUserDto
     {
         [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public string CellPhone { get; set; } = "00000-0000";
-        public string Email { get; set; } = "email@email.com";
+        public string UserName { get; set; } = "email@email.com";
+        public string Password { get; set; } = "1234";
+        [JsonIgnore]
         public Guid CustomerId { get; set; } = Guid.NewGuid();
     }
 }

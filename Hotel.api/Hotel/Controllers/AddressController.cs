@@ -54,8 +54,11 @@ namespace Hotel.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<Address>>> UpdateAddress(CreateAddressDto request)
+        public async Task<ActionResult<List<Address>>> UpdateAddress(UpdateAddressDto request)
         {
+            if (request == null)
+                return BadRequest("Request cant be null");
+
             var customer = await _context.Customers.FindAsync(request.CustomerId);
             if (customer == null)
                 return NotFound();

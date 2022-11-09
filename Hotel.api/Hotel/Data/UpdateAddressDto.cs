@@ -1,10 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Hotel.Data
+﻿namespace Hotel.Data
 {
-    public class CreateAddressDto
+    public class UpdateAddressDto
     {
-        [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Street { get; set; } = "Rua A";
         public int Number { get; set; } = 000;

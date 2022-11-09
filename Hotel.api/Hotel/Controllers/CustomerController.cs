@@ -41,13 +41,18 @@ namespace Hotel.Controllers
                 .Include(c => c.UserLogin)
                 .ToListAsync();
 
+            if (customer == null)
+                return NotFound();
+
             return Ok(customer);
         }
 
         [HttpPost]
         public async Task<ActionResult<List<Customer>>> AddCustomer(CreateCustomerDto request)
         {
-          
+            if (request == null)
+                return BadRequest("Request cant be null");
+
             if (!CpfValidator.IsValid(request.CpfCustomer))
                 return BadRequest("Invalid Cpf!");
 
@@ -60,8 +65,7 @@ namespace Hotel.Controllers
             
             var customer = new Customer
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                Name = request.Name,
                 CpfCustomer = request.CpfCustomer,
                 RgCustomer = request.RgCustomer
             };
@@ -75,7 +79,7 @@ namespace Hotel.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<Customer>>> UpdateCustomer(CreateCustomerDto request)
+        public async Task<ActionResult<List<Customer>>> UpdateCustome(UpdateCustomerDto request)
         {
             var dbCustomer = await _context.Customers.FindAsync(request.Id);
             if (dbCustomer == null)
@@ -89,8 +93,7 @@ namespace Hotel.Controllers
             if (!Int32.TryParse(request.RgCustomer, out int n))
                 return BadRequest("Invalid Rg!");
 
-            dbCustomer.FirstName = request.FirstName;
-            dbCustomer.LastName = request.LastName;
+            dbCustomer.Name = request.Name;
             dbCustomer.CpfCustomer = request.CpfCustomer;
             dbCustomer.RgCustomer = request.RgCustomer;
 
