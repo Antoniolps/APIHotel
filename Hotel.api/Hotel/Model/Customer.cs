@@ -15,6 +15,7 @@ namespace Hotel.Model
         public List<Address> AddressesCustomer { get; set; }
         [JsonIgnore]
         public List<Contacts> ContactsCustomer { get; set; }
+        [JsonIgnore]
         public UserLogin UserLogin { get; set; }
 
     }
