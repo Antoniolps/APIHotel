@@ -27,9 +27,7 @@ namespace Hotel.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Customer>>> Get()
         {
-            return Ok(await _context.Customers
-                .Include(c => c.UserLogin)
-                .ToListAsync()); 
+            return Ok(await _context.Customers.ToListAsync()); 
      
         }
         
@@ -38,7 +36,6 @@ namespace Hotel.Controllers
         {
             var customer = await _context.Customers
                 .Where(c => c.Id == id)
-                .Include(c => c.UserLogin)
                 .ToListAsync();
 
             if (customer == null)
@@ -48,7 +45,7 @@ namespace Hotel.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Customer>>> AddCustomer(CreateCustomerDto request)
+        public async Task<ActionResult<Guid>> AddCustomer(CreateCustomerDto request)
         {
             if (request == null)
                 return BadRequest("Request cant be null");
@@ -73,7 +70,7 @@ namespace Hotel.Controllers
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Customers.ToListAsync());
+            return Ok(await _context.Customers.FindAsync(customer.Id));
             
             
         }

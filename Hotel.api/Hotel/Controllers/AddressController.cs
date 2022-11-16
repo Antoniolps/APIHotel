@@ -32,10 +32,10 @@ namespace Hotel.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Address>>> Create(CreateAddressDto request)
         {
-            var customer = await _context.Customers.FindAsync(request.CustomerId);
+            var customer = await _context.Customers.Where(c => c.Id == request.Id).ToListAsync();
             if(customer == null)
                 return NotFound();
-
+            
             var address = new Address
             {
                 Street = request.Street,
