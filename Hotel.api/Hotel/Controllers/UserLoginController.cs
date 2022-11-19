@@ -18,15 +18,15 @@ namespace Hotel.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<UserLogin>> Register(CreateUserLoginDto request)
+        [HttpPost("register/{customerId}")]
+        public async Task<ActionResult<UserLogin>> Register(CreateUserLoginDto request, Guid customerId)
         {
-            var customer = await _context.Customers.FindAsync(request.CustomerId);
+            var customer = await _context.Customers.FindAsync(customerId);
             if (customer == null)
                 return NotFound();
 
             var contacts = await _context.Contacts
-                .Where(c => c.CustomerId == request.CustomerId)
+                .Where(c => c.CustomerId == customerId)
                 .ToListAsync();
             if (contacts == null)
                 return BadRequest();
@@ -40,7 +40,7 @@ namespace Hotel.Controllers
                 UserName = request.UserName,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                CustomerId = request.CustomerId
+                CustomerId = customerId
             };
 
             _context.Users.Add(newUser);
@@ -61,7 +61,12 @@ namespace Hotel.Controllers
             if (!VerifyPasswordHash(request.Password, user))
                 return BadRequest("Wrong Password!");
 
-            return Ok("Success");
+            var customer = await _context.Customers.FindAsync(user.CustomerId);
+
+            if (customer == null)
+                return BadRequest("Customer not exists");
+
+            return Ok(customer);
         }
 
         [NonAction]

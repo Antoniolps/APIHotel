@@ -47,6 +47,7 @@ namespace Hotel.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> AddCustomer(CreateCustomerDto request)
         {
+            
             if (request == null)
                 return BadRequest("Request cant be null");
 
@@ -54,6 +55,16 @@ namespace Hotel.Controllers
                 return BadRequest("Invalid Cpf!");
 
             request.CpfCustomer = CpfFormatter.Format(request.CpfCustomer);
+
+            var consult = await _context.Customers.ToListAsync();
+
+            foreach(var client in consult)
+            {
+                if (request.CpfCustomer.Equals(client.CpfCustomer))
+                    return BadRequest("Customer already exists!");
+            }
+
+           
 
             //Working for RG's without a verification digit
             if (!Int32.TryParse(request.RgCustomer, out int n))
@@ -75,10 +86,10 @@ namespace Hotel.Controllers
             
         }
 
-        [HttpPut]
-        public async Task<ActionResult<List<Customer>>> UpdateCustome(UpdateCustomerDto request)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<Customer>>> UpdateCustome(UpdateCustomerDto request, Guid id)
         {
-            var dbCustomer = await _context.Customers.FindAsync(request.Id);
+            var dbCustomer = await _context.Customers.FindAsync(id);
             if (dbCustomer == null)
                 return BadRequest("Customer not found");
 

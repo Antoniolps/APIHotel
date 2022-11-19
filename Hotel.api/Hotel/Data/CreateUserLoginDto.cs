@@ -10,6 +10,6 @@ namespace Hotel.Data
         [JsonIgnore]
         public string UserName { get; set; } = "email@email.com";
         public string Password { get; set; } = "1234";
-        public Guid CustomerId { get; set; } = Guid.NewGuid();   
+        
     }
 }

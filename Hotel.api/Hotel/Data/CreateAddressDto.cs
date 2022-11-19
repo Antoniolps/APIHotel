@@ -12,6 +12,5 @@ namespace Hotel.Data
         public string City { get; set; } = "Future City";
         public string State { get; set; } = "Acre";
         public string PostalCode { get; set; } = "00000-000";
-        public Guid CustomerId { get; set; } = Guid.NewGuid();
     }
 }

@@ -15,7 +15,7 @@ namespace Hotel.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("{customerId}")]
         public async Task<ActionResult<List<Address>>> Get(Guid customerId)
         {
             var customer = await _context.Customers.FindAsync(customerId);
@@ -29,8 +29,8 @@ namespace Hotel.Controllers
             return adresses;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<List<Address>>> Create(CreateAddressDto request)
+        [HttpPost("{customerId}")]
+        public async Task<ActionResult<List<Address>>> Create(CreateAddressDto request, Guid customerId)
         {
             var customer = await _context.Customers.Where(c => c.Id == request.Id).ToListAsync();
             if(customer == null)
@@ -44,30 +44,22 @@ namespace Hotel.Controllers
                 City = request.City,
                 State = request.State,
                 PostalCode = request.PostalCode,
-                CustomerId = request.CustomerId
+                CustomerId = customerId
             };
 
             _context.Address.Add(address);
             await _context.SaveChangesAsync();
 
-            return await Get(request.CustomerId);
+            return await Get(customerId);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<List<Address>>> UpdateAddress(UpdateAddressDto request)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<Address>>> UpdateAddress(UpdateAddressDto request, Guid id)
         {
             if (request == null)
                 return BadRequest("Request cant be null");
 
-            var customer = await _context.Customers.FindAsync(request.CustomerId);
-            if (customer == null)
-                return NotFound();
-
-            var addresses = await _context.Address
-                .Where(a => a.CustomerId == request.CustomerId)
-                .ToListAsync();
-
-            var address = addresses.Find(a => a.Id == request.Id);
+            var address = _context.Address.Find(id);
             if (address == null)
                 return NotFound();
 
@@ -77,14 +69,13 @@ namespace Hotel.Controllers
             address.City = request.City;
             address.State = request.State;
             address.PostalCode = request.PostalCode;
-            address.CustomerId = request.CustomerId;
 
             await _context.SaveChangesAsync();
 
-            return await Get(request.CustomerId);
+            return await Get(address.CustomerId);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<List<Address>>> Delete(Guid id)
         {
             var address = await _context.Address.FindAsync(id);
