@@ -1,4 +1,4 @@
-﻿namespace Hotel.Data
+﻿namespace Hotel.Model
 {
     public class UpdateContactsDto
     {

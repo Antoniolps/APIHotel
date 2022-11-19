@@ -1,10 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Hotel.Data
+﻿namespace Hotel.Model
 {
-    public class CreateCustomerDto
+    public class UpdateCustomerDto
     {
-        [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = "Antonio Neto";
         public string CpfCustomer { get; set; } = "000.000.000-00";

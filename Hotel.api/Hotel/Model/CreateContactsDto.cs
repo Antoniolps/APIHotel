@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Hotel.Data
+namespace Hotel.Model
 {
     public class CreateContactsDto
     {

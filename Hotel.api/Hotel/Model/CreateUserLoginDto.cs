@@ -1,7 +1,6 @@
-﻿using Hotel.Model;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Hotel.Data
+namespace Hotel.Model
 {
     public class CreateUserLoginDto
     {
@@ -10,6 +9,6 @@ namespace Hotel.Data
         [JsonIgnore]
         public string UserName { get; set; } = "email@email.com";
         public string Password { get; set; } = "1234";
-        
+
     }
 }
